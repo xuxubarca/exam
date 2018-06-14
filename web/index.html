@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+<title></title>
+
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+
+<body>
+<!-- 	<input type="text" name="con" id="con"/>
+	<button onclick="test()">发送</button> -->
+	<img src="images/icon_share.jpg" width="0" height="0">
+
+	<div class="wrap">
+
+		<div class="enter_wrap">
+
+			<!--<div class="wrap_top">
+
+				<img class="top_img" src="images/img_top.png">
+
+			</div>-->
+
+			<div class="wrap_center">
+
+				<div class="enter_btn">开始测试</div>
+
+			</div>
+
+			<div class="wrap_bottom">
+
+			</div>
+
+		</div><!-- /.enter_wrap -->
+
+		<div class="topic_wrap">
+
+			<div class="fade_wrap">
+
+				<div class="wrap_top">
+
+					<div class="topic_no">
+
+						<span class="curr_no" id="curr_no">1</span>/<span class="count">10</span>
+
+					</div>
+
+				</div>
+
+				<div class="wrap_top1">
+
+					<div class="topic_title" id="topic_title"></div>
+
+				</div>
+
+				<div class="wrap_center">
+
+					<table class="topic_option" id="topic_option">
+
+					</table>
+
+				</div>
+
+			</div>
+
+			<div class="wrap_bottom">
+			<!--<img class="lagou_logo" src="images/topic_bottom.png">-->
+
+
+			</div>
+
+		</div><!-- /.topic_wrap -->
+
+		<div class="over_wrap">
+
+			<div class="wrap_top">
+
+				<div class="over_grade">
+
+					<span class="grade_title">您的智商指数是</span>
+
+					<span class="grade">
+
+						<div class="grade_detail_wrap">
+
+							<b class="grade_detail"></b>分
+
+						</div>
+
+					</span>
+
+				</div>
+
+			</div>
+
+			<div class="wrap_center">
+
+				<div class="over_des">
+
+					<span class="des_title">智商关键词</span>
+
+					<div class="des_content">
+
+						<div class="des_keyword"></div>
+
+						<div class="des_detail"></div>
+
+					</div>
+
+				</div> 
+
+				<div class="over_btn">
+					<div class="over_btn_detail over_share">分享结果</div>
+					<div class="over_btn_detail back"><a href="demo.html">再玩一次</a></div>
+				</div>
+
+			</div>
+
+			<div class="wrap_bottom">
+
+			</div>
+
+		</div><!-- /.over_wrap -->
+
+		<div class="share_wrap">
+
+			<div class="share_text">
+
+				<img class="share_img" src="images/share.png">
+
+			</div>
+
+		</div>
+
+	</div><!-- /.wrap -->
+
+	<script type="text/javascript" src="js/jquery.js"></script>
+
+	<script type="text/javascript" src="js/index.js"></script>
+
+	<script type="text/javascript">
+
+	careerism.init();
+
+	function test(){
+		var con = $("#con").val();
+		ws.send(con);
+	}
+	</script>
+
+</html> 
