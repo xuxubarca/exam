@@ -12,13 +12,21 @@
 
 
 <link rel="stylesheet" type="text/css" href="css/style.css">
-
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/jquery.knob.js"></script> 
+<script src="js/jquery.throttle.js"></script>
+<script src="js/jquery.classycountdown.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.classycountdown.min.css" />
+<style>
+    .ClassyCountdownDemo { text-align: center;}
+    /*#countdown3 { background:rgb(52, 73, 94) }*/
+</style>
 </head>
 
 <body>
+
 <!-- 	<input type="text" name="con" id="con"/>
 	<button onclick="test()">发送</button> -->
-	<img src="images/icon_share.jpg" width="0" height="0">
 
 	<div class="wrap">
 
@@ -46,24 +54,23 @@
 
 			<div class="fade_wrap">
 
-				<div class="wrap_top">
-
+<!-- 				<div class="wrap_top">
+					
 					<div class="topic_no">
 
 						<span class="curr_no" id="curr_no">1</span>/<span class="count">10</span>
 
 					</div>
 
-				</div>
-
+				</div> -->
+				<div id="countdown3" class="ClassyCountdownDemo"></div>
 				<div class="wrap_top1">
 
 					<div class="topic_title" id="topic_title"></div>
 
 				</div>
-
+				
 				<div class="wrap_center">
-
 					<table class="topic_option" id="topic_option">
 
 					</table>
@@ -143,7 +150,7 @@
 
 	</div><!-- /.wrap -->
 
-	<script type="text/javascript" src="js/jquery.js"></script>
+	<!-- // <script type="text/javascript" src="js/jquery.js"></script> -->
 
 	<script type="text/javascript" src="js/index.js"></script>
 
@@ -151,10 +158,6 @@
 
 	careerism.init();
 
-	function test(){
-		var con = $("#con").val();
-		ws.send(con);
-	}
 	</script>
 
 </html> 

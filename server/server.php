@@ -42,7 +42,6 @@ class WebsocketKnowledge {
     }
 
    	public function open(swoole_websocket_server $server, $request){
-
 		echo "server: 握手成功 fd{$request->fd}\n";
 	}
 
@@ -65,13 +64,33 @@ class WebsocketKnowledge {
 				$q_id = 1;
 				$data = self::get_exam_questions($frame->fd,$q_id);
 				$data = json_encode($data);
+				self::setTimer($server,$frame);
 				$server->push($frame->fd, $data);
 				return;
 			case 'answer': // 答题
-			 	$next_q_id = $request['q_id'] + 1;
-				$data = self::get_exam_questions($frame->fd,$next_q_id);
-				$data = json_encode($data);
-		        $server->push($frame->fd, $data);
+				$q_id = $request['q_id'];
+				$option = $request['options'];
+				$res = self::check_answer($frame->fd,$q_id,$option);
+
+				if($res){ // 回答正确
+					$next_q_id = $q_id + 1;
+					$data = self::get_exam_questions($frame->fd,$next_q_id);
+					$data['type'] = 'right';
+					$data['option'] = $request['options'];
+					$data = json_encode($data);
+					self::setTimer($server,$frame);
+			        $server->push($frame->fd, $data);
+				}else{
+					$data = array();
+					$data['type'] = 'wrong';
+					$data['option'] = $request['options'];
+					$data = json_encode($data);
+					$server->push($frame->fd, $data);
+
+					$this->rd->delete($choosed_key); 
+					$this->rd->delete($answer_key); 
+				}
+
 				return;
 			default:
 				return;
@@ -130,7 +149,7 @@ class WebsocketKnowledge {
 
 
 		$choosed_key = "choosed_{$fd}";//已选题目
-		$answer_key = "answer_{$fd}";//已选题目
+		$answer_key = "answer_{$fd}";//正确答案
 		
 
 	 	$options = $question['options'];
@@ -150,6 +169,19 @@ class WebsocketKnowledge {
 	 	return $data;
 	}
 
+	// 检查答案
+	public function check_answer($fd,$q_id,$option){
+
+		$answer_key = "answer_{$fd}";//正确答案
+		$answer = $this->rd->hget($answer_key,$q_id);
+		if($option == $answer){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
 	// 获取总记录数
 	public function getCount($conn, $dbname, $collname){
 		$cmd = array(
@@ -165,7 +197,19 @@ class WebsocketKnowledge {
 	 	return 0;
 	}
 
-	
+	// 计时器
+	public function setTimer($server,$frame){
+
+		swoole_timer_after(10000, function() use ($server,$frame){
+			$data = array(
+				'type'=>'timer',
+			);
+			$data = json_encode($data);
+     		$server->push($frame->fd, $data);
+		});
+
+	}
+
 }
 
 
