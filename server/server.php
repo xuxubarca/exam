@@ -88,6 +88,14 @@ class WebsocketKnowledge {
 						);
 						$data = json_encode($data);
 						$server->push($frame->fd, $data);
+
+						$log_key = "easy_log_over";
+						$log = unserialize($this->rd->get($log_key));
+						if(empty($log)){
+							$log = array();
+						}
+						$log[] = $q_id;
+						$this->rd->set($log_key,serialize($log));
 						return;
 					}
 					$data = self::get_exam_questions($frame->fd,$next_q_id);
