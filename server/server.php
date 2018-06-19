@@ -4,7 +4,7 @@ class WebsocketKnowledge {
     public $server;
     public $conn;
     public $rd;
-
+    public $timer;
     public function __construct() {
     	$this->conn = new MongoDB\Driver\Manager("mongodb://localhost:27017");
     	$this->rd = new Redis();
@@ -60,27 +60,42 @@ class WebsocketKnowledge {
 				$this->rd->delete($choosed_key); 
 				$this->rd->delete($answer_key); 
 				return;
-			case 'start':
+			case 'start': // 开始
 				$q_id = 1;
 				$data = self::get_exam_questions($frame->fd,$q_id);
 				$data = json_encode($data);
-				self::setTimer($server,$frame);
+				if($this->timer){
+					swoole_timer_clear($this->timer);
+				}
+				$this->timer = self::setTimer($server,$frame);
 				$server->push($frame->fd, $data);
 				return;
 			case 'answer': // 答题
+				swoole_timer_clear($this->timer);
 				$q_id = $request['q_id'];
 				$option = $request['options'];
 				$res = self::check_answer($frame->fd,$q_id,$option);
 
 				if($res){ // 回答正确
 					$next_q_id = $q_id + 1;
+					if($next_q_id > 10){
+						$data = array(
+							'type'=>'over',
+							'option'=>$request['options'],
+						);
+						$data = json_encode($data);
+						$server->push($frame->fd, $data);
+						return;
+					}
 					$data = self::get_exam_questions($frame->fd,$next_q_id);
 					$data['type'] = 'right';
 					$data['option'] = $request['options'];
 					$data = json_encode($data);
-					self::setTimer($server,$frame);
+	
+					$this->timer = self::setTimer($server,$frame);
 			        $server->push($frame->fd, $data);
 				}else{
+
 					$data = array();
 					$data['type'] = 'wrong';
 					$data['option'] = $request['options'];
@@ -108,8 +123,12 @@ class WebsocketKnowledge {
 	// 从题库随机取题目
 	public function get_exam_questions($fd,$q_id){
 
-		$dbname = "test";
-		$collname = "exam";
+		// $dbname = "test";
+		// $collname = "exam";
+
+		$dbname = "exam";
+		$collname = "questions";
+
 		$total = self::getCount($this->conn, $dbname, $collname);
 
 		$choosed_key = "choosed_{$fd}";//已选题目
@@ -128,7 +147,7 @@ class WebsocketKnowledge {
 			$skip = mt_rand(0, $total-1);
 		}
 		$choosed[] = $skip;
-		$this->rd ->set($choosed_key,serialize($choosed));
+		$this->rd->set($choosed_key,serialize($choosed));
 
 		$filter = array();
 	 	$options = array('skip'=>$skip, 'limit'=>1);
@@ -171,12 +190,18 @@ class WebsocketKnowledge {
 
 	// 检查答案
 	public function check_answer($fd,$q_id,$option){
-
 		$answer_key = "answer_{$fd}";//正确答案
 		$answer = $this->rd->hget($answer_key,$q_id);
 		if($option == $answer){
 			return true;
 		}else{
+			$log_key = "easy_log";
+			$log = unserialize($this->rd->get($log_key));
+			if(empty($log)){
+				$log = array();
+			}
+			$log[] = $q_id;
+			$this->rd->set($log_key,serialize($log));
 			return false;
 		}
 
@@ -200,13 +225,15 @@ class WebsocketKnowledge {
 	// 计时器
 	public function setTimer($server,$frame){
 
-		swoole_timer_after(10000, function() use ($server,$frame){
+		$timer = swoole_timer_after(11000, function() use ($server,$frame){
 			$data = array(
 				'type'=>'timer',
 			);
 			$data = json_encode($data);
      		$server->push($frame->fd, $data);
 		});
+
+		return $timer;
 
 	}
 
