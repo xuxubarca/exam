@@ -53,8 +53,9 @@ class WebsocketKnowledge {
 
 		$choosed_key = "choosed_{$frame->fd}";//已选题目
 		$answer_key = "answer_{$frame->fd}";//已选题目
-		echo json_encode($request);
-		echo "\n";
+
+		// echo json_encode($request);
+		// echo "\n";
 		switch($request['type']){
 
 			case 'login': // 登录
@@ -132,15 +133,15 @@ class WebsocketKnowledge {
 
 
 	// 从题库随机取题目
-	public function get_exam_questions($fd,$q_id){
+	public function get_exam_questions($fd,$q_id,$query){
 
 		// $dbname = "test";
 		// $collname = "exam";
 
 		$dbname = "exam";
 		$collname = "questions";
-
-		$total = self::getCount($this->conn, $dbname, $collname);
+		$query = array('category' => '足球');
+		$total = self::getCount($this->conn, $dbname, $collname, $query);
 
 		$choosed_key = "choosed_{$fd}";//已选题目
         $choosed = unserialize($this->rd->get($choosed_key));
@@ -174,8 +175,8 @@ class WebsocketKnowledge {
 	   			$result[] = $v;
 	  		}
 	 	}
-	 	echo json_encode($choosed);
-	 	echo "\n";
+	 	// echo json_encode($choosed);
+	 	// echo "\n";
 		$question = $result[0];
 
 
@@ -220,10 +221,10 @@ class WebsocketKnowledge {
 	}
 
 	// 获取总记录数
-	public function getCount($conn, $dbname, $collname){
+	public function getCount($conn, $dbname, $collname,$query){
 		$cmd = array(
 	  		'count' => $collname,
-	  		'query' => array()
+	  		'query' => $query,
 	 	);
 	 	$command = new MongoDB\Driver\Command($cmd);
 	 	$result = $conn->executeCommand($dbname, $command);
