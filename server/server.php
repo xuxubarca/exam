@@ -133,7 +133,7 @@ class WebsocketKnowledge {
 
 
 	// 从题库随机取题目
-	public function get_exam_questions($fd,$q_id,$query){
+	public function get_exam_questions($fd,$q_id){
 
 		// $dbname = "test";
 		// $collname = "exam";
