@@ -14,7 +14,7 @@ class WebsocketKnowledge {
         $this->server = new swoole_websocket_server("0.0.0.0", 9502);
 		$this->server->set(array(
 			'worker_num' => 4,
-			'daemonize' => false, // 作为守护进程
+			'daemonize' => true, // 作为守护进程
 			'max_request' => 99999, //处理完超过此数值的任务后将自动退出，进程退出后会释放所有内存和资源
 			'max_conn' => 3000, // 最大连接数
 			//表示每90秒遍历一次，一个连接如果600秒内未向服务器发送任何数据，此连接将被强制关闭
