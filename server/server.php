@@ -140,7 +140,8 @@ class WebsocketKnowledge {
 
 		$dbname = "exam";
 		$collname = "questions";
-		$query = array('category' => '足球');
+		// $query = array('category' => '足球');
+		$query = array('category' => array('$ne' => '足球'));
 		$total = self::getCount($this->conn, $dbname, $collname, $query);
 
 		$choosed_key = "choosed_{$fd}";//已选题目
@@ -162,7 +163,8 @@ class WebsocketKnowledge {
 		$this->rd->set($choosed_key,serialize($choosed));
 
 		// $filter = array();
-		$filter = ['category' => '足球'];
+		// $filter = ['category' => '足球'];
+		$filter = $query;
 	 	$options = array('skip'=>$skip, 'limit'=>1);
 	 	$query = new MongoDB\Driver\Query($filter, $options);
 	 	$cursor = $this->conn->executeQuery($dbname.'.'.$collname, $query);
