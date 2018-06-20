@@ -160,7 +160,8 @@ class WebsocketKnowledge {
 		$choosed[] = $skip;
 		$this->rd->set($choosed_key,serialize($choosed));
 
-		$filter = array();
+		// $filter = array();
+		$filter = ['category' => ['$gt' => '足球']];
 	 	$options = array('skip'=>$skip, 'limit'=>1);
 	 	$query = new MongoDB\Driver\Query($filter, $options);
 	 	$cursor = $this->conn->executeQuery($dbname.'.'.$collname, $query);
