@@ -5,6 +5,7 @@ class WebsocketKnowledge {
     public $conn;
     public $rd;
     public $timer;
+    public $tp;
     // public $q_id;
     public function __construct() {
     	$this->conn = new MongoDB\Driver\Manager("mongodb://localhost:27017");
@@ -65,6 +66,7 @@ class WebsocketKnowledge {
 			case 'start': // 开始
 				$this->rd->delete($choosed_key); 
 				$this->rd->delete($answer_key); 
+				$this->tp = $request['tp'];
 				$q_id = 1;
 				$data = self::get_exam_questions($frame->fd,$q_id);
 				$data = json_encode($data);
@@ -141,7 +143,15 @@ class WebsocketKnowledge {
 		$dbname = "exam";
 		$collname = "questions";
 		// $query = array('category' => '足球');
-		$query = array('category' => array('$ne' => '足球'));
+
+		if($this->tp == 1){
+			$query = array('category' => array('$ne' => '足球'));
+		}else if($this->tp == 2){
+			$query = array('category' => '足球');
+		}else{
+			return false;
+		}
+		
 		$total = self::getCount($this->conn, $dbname, $collname, $query);
 
 		$choosed_key = "choosed_{$fd}";//已选题目
