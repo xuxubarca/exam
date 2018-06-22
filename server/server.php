@@ -76,6 +76,20 @@ class WebsocketKnowledge {
 				$this->timer = self::setTimer($server,$frame);
 				$server->push($frame->fd, $data);
 				return;
+			case 'restart': // 重来
+
+				$this->rd->delete($choosed_key); 
+				$this->rd->delete($answer_key); 
+				$q_id = 1;
+				$data = self::get_exam_questions($frame->fd,$q_id);
+				$data = json_encode($data);
+				if($this->timer){
+					swoole_timer_clear($this->timer);
+				}
+				$this->timer = self::setTimer($server,$frame);
+				$server->push($frame->fd, $data);
+				return;
+
 			case 'answer': // 答题
 				swoole_timer_clear($this->timer);
 				$q_id = $request['q_id'];
